@@ -1,0 +1,77 @@
+---
+title: "HW2"
+author: "Danielle Sclafani"
+date: "4/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+#loading in the data
+```{r}
+econ_data <- read.csv(here("data", "HW2_Water.csv")) %>% 
+  clean_names()
+```
+
+```{r}
+plot(econ_data$mc_agriculture)
+
+ggplot(data = econ_data, aes(x = quantity, y = mc_agriculture)) + geom_point()
+
+res = lm(mc_agriculture~quantity, data = econ_data)
+summary(res)
+ggplot(data = econ_data, aes(x = quantity, y = mc_agriculture)) + stat_summary(fun.y = "mean", geom = "point", col = "blue", size =2) + geom_smooth(method = "lm")
+```
+
+mc_ag P = -3.167 + 5.1025Q
+
+```{r}
+plot(econ_data$mc_meat)
+
+ggplot(data = econ_data, aes(x = quantity, y = mc_meat)) + geom_point()
+
+res1 = lm(mc_meat~quantity, data = econ_data)
+summary(res1)
+ggplot(data = econ_data, aes(x = quantity, y = mc_meat)) + stat_summary(fun.y = "mean", geom = "point", col = "blue", size =2) + geom_smooth(method = "lm")
+```
+
+mc_meat P = 5.727 + 3.75Q
+
+```{r}
+ggplot(data = econ_data, aes(x = quantity, y = mc_industrial)) + geom_point()
+
+res2 = lm(mc_industrial~quantity, data = econ_data)
+summary(res2)
+ggplot(data = econ_data, aes(x = quantity, y = mc_industrial)) + stat_summary(fun.y = "mean", geom = "point", col = "blue", size =2) + geom_smooth(method = "lm")
+```
+
+mc_industrial P = -38.1075 + 11.3Q
+
+```{r}
+res3 = lm(mc_urban~quantity, data = econ_data)
+summary(res3)
+ggplot(data = econ_data, aes(x = quantity, y = mc_urban)) + stat_summary(fun.y = "mean", geom = "point", col = "blue", size =2) + geom_smooth(method = "lm")
+```
+
+MC urban P = -19.8 + 5.97Q
+
+
+
+```{r}
+#trying to plot them all together
+ggplot(data = econ_data, aes(x = quantity, y = mc_agriculture)) + geom_point(col = "red")+
+  stat_smooth(method=lm, col = "red", se = FALSE)+
+  geom_point(data = econ_data, aes(x = quantity, y = mc_meat), col = "blue") + stat_smooth(aes(x=quantity, y = mc_meat), method = lm, col = "blue", se=FALSE)+
+  geom_point(data = econ_data, aes(x = quantity, y = mc_industrial), col = "orange") + stat_smooth(aes(x=quantity, y = mc_industrial), method = lm, col = "orange", se=FALSE)+
+  geom_point(data = econ_data, aes(x = quantity, y = mc_urban), col = "green") + stat_smooth(aes(x=quantity, y = mc_urban), method = lm, col = "green", se=FALSE) + 
+  labs(x = "Quantity of Water (Acre Feet)" , y = "Marginal Cost ($/Acre Foot)", title = "Marginal Cost of Industries")+
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5), axis.line = element_line(size =1, color = "black"))
+```
+
+
