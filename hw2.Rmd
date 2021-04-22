@@ -128,6 +128,8 @@ ggplot(data = q3_data, aes(x = acre_foot, y = ag_demand)) + geom_point(col = "re
   stat_smooth(method=lm, col = "red", se = FALSE)+
   geom_point(data = q3_data, aes(x = acre_foot, y = meat_demand), col = "blue") + stat_smooth(aes(x=acre_foot, y = meat_demand), method = lm, col = "blue", se=FALSE)+
   geom_point(data = q3_data, aes(x = acre_foot, y = industry_demand), col = "orange") + stat_smooth(aes(x=acre_foot, y =industry_demand), method = lm, col = "orange", se=FALSE) + 
+    scale_y_continuous(limits = c(0,300), expand = c(0,0)) +
+  scale_x_continuous(limits = c(0,350), expand = c(0,0))+
   labs(x = "Quanity of Water (AF)" , 
        y = "Marginal Willingness to Pay ($/AF)", 
        title = "Demand for Water",
@@ -143,4 +145,96 @@ ggplot(data = q3_data, aes(x = acre_foot, y = ag_demand)) + geom_point(col = "re
 
 ggsave(here("figs", "q3_graph.png"))
 ```
+
+
+### abatement curve for #3
+```{r}
+ggplot(data = econ_data, aes(x = reduced_water_use_abatement, y = mc_agriculture)) + geom_point(col = "red")+
+  stat_smooth(method=lm, col = "red", se = FALSE)+
+  geom_point(data = econ_data, aes(x = reduced_water_use_abatement, y = mc_meat), col = "blue") + stat_smooth(aes(x=reduced_water_use_abatement, y = mc_meat), method = lm, col = "blue", se=FALSE)+
+  geom_point(data = econ_data, aes(x = reduced_water_use_abatement, y = mc_industrial), col = "orange") + stat_smooth(aes(x=reduced_water_use_abatement, y = mc_industrial), method = lm, col = "orange", se=FALSE)+
+  scale_y_continuous(limits = c(0,165), expand = c(0,0)) +
+  scale_x_continuous(limits = c(0,165), expand = c(0,0))+
+  labs(x = "Abatement - Quantity of Pollutant Reduced (Acre/Foot)" , 
+       y = "Marginal Cost of Abatement($/Acre Foot)", 
+       title = "Marginal Cost of Abatement across 4 Industries",
+       subtitle = "Industry Key: <span style = 'color:red'><b>Agriculture</b></span>, <span style = 'color:blue'><b>Meat</b></span>, <span style = 'color:orange'><b>Industrial</b></span>") +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0), 
+        axis.line = element_line(size =1, color = "black"),
+        plot.subtitle = element_textbox_simple(
+          size = 11,
+          color = "black",
+          padding = margin(5,5,5,5),
+          margin = margin(0,0,0,0)))
+
+ggsave(here("figs","abate_3.png"))
+```
+
+#included aggregate curve
+```{r}
+#demand and aggregate demand
+agg_data <- read_csv(here("data", "data_3_agg.csv")) %>% 
+  clean_names()
+
+ggplot(data = agg_data, aes(x = acre_foot, y = ag_demand)) + geom_point(col = "red")+
+  stat_smooth(method=lm, col = "red", se = FALSE)+
+  geom_point(data = agg_data, aes(x = acre_foot, y = meat_demand), col = "blue") + 
+  stat_smooth(aes(x=acre_foot, y = meat_demand), method = lm, col = "blue", se=FALSE) +
+  geom_point(data = agg_data, aes(x = acre_foot, y = industry_demand), col = "orange") + 
+  stat_smooth(aes(x=acre_foot, y =industry_demand), method = lm, col = "orange", se=FALSE) + 
+  geom_point(data = agg_data, aes(x = acre_foot, y = agg_mwtp), col = "green") + 
+    scale_y_continuous(limits = c(0,300), expand = c(0,0)) +
+  scale_x_continuous(limits = c(0,350), expand = c(0,0))+
+  labs(x = "Quanity of Water (AF)" , 
+       y = "Marginal Willingness to Pay ($/AF)", 
+       title = "Demand for Water",
+       subtitle = "Industry Key: <span style = 'color:red'><b>Agriculture</b></span>, <span style = 'color:blue'><b>Meat</b></span>, <span style = 'color:orange'><b>Industrial</b></span>") +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0), 
+        axis.line = element_line(size =1, color = "black"),
+        plot.subtitle = element_textbox_simple(
+          size = 11,
+          color = "black",
+          padding = margin(5,5,5,5),
+          margin = margin(0,0,0,0)))
+
+ggsave(here("figs", "agg_demand_curve.png"))
+```
+
+
+## aggregate MC curve
+
+```{r}
+agg_mc_data <- read_csv(here("data", "HW2_Water_agg.csv")) %>% 
+  clean_names()
+
+ggplot(data = agg_mc_data, aes(x = reduced_water_use_abatement, y = mc_agriculture)) + geom_point(col = "red")+
+  stat_smooth(method=lm, col = "red", se = FALSE)+
+  geom_point(data = agg_mc_data, aes(x = reduced_water_use_abatement, y = mc_meat), col = "blue") + stat_smooth(aes(x=reduced_water_use_abatement, y = mc_meat), method = lm, col = "blue", se=FALSE)+
+  geom_point(data = agg_mc_data, aes(x = reduced_water_use_abatement, y = mc_industrial), col = "orange") + stat_smooth(aes(x=reduced_water_use_abatement, y = mc_industrial), method = lm, col = "orange", se=FALSE)+
+  geom_point(data = agg_mc_data, aes(x = reduced_water_use_abatement, y = mc_agg), col = "green") + stat_smooth(aes(x=reduced_water_use_abatement, y = mc_agg), method = lm, col = "green", se=FALSE)+
+  scale_y_continuous(limits = c(0,165), expand = c(0,0)) +
+  scale_x_continuous(limits = c(0,320), expand = c(0,0))+
+  labs(x = "Abatement - Quantity of Pollutant Reduced (Acre/Foot)" , 
+       y = "Marginal Cost of Abatement($/Acre Foot)", 
+       title = "Marginal Cost of Abatement across 4 Industries",
+       subtitle = "Industry Key: <span style = 'color:red'><b>Agriculture</b></span>, <span style = 'color:blue'><b>Meat</b></span>, <span style = 'color:orange'><b>Industrial</b></span>") +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0), 
+        axis.line = element_line(size =1, color = "black"),
+        plot.subtitle = element_textbox_simple(
+          size = 11,
+          color = "black",
+          padding = margin(5,5,5,5),
+          margin = margin(0,0,0,0)))
+
+ggsave(here("figs","mc_agg.png"))
+```
+
+
+
+
+
+
 
